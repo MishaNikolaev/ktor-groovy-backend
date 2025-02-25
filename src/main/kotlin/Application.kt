@@ -16,7 +16,7 @@ fun Application.module() {
 
     routing {
         get("/") {
-            call.respondText("Hello, World! Сервер работает!")
+            call.respondText("Hello, World! Server is working!")
         }
     }
 }

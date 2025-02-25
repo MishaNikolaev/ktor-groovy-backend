@@ -13,7 +13,6 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    println("SYKA BLYAD")
 
     routing {
         get("/") {

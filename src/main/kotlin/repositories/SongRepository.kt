@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
+/*
 class SongRepository {
 
     fun getAllSongs(): List<Song> = transaction {
@@ -51,4 +52,12 @@ class SongRepository {
             it[Musics.largeCover] = song.largeCover
         }[Musics.id].toString()
     }
+}
+
+ */
+
+interface SongRepository {
+    fun getAllSongs(): List<Song>
+    fun getSongById(id: String): Song?
+    fun addSong(song: Song): String
 }

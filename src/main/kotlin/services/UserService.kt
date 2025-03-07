@@ -2,8 +2,11 @@ package com.nmichail.services
 
 import com.nmichail.database.users.UserDTO
 import com.nmichail.repositories.UserRepository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class UserService(private val userRepository: UserRepository) {
+class UserService : KoinComponent {
+    private val userRepository: UserRepository by inject()
 
     fun getUserById(id: Int): UserDTO? = userRepository.getUserById(id)
 

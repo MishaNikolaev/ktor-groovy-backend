@@ -6,7 +6,8 @@ import com.nmichail.utils.FileUtils
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class MusicService(private val songRepository: SongRepository) {
+class MusicService : KoinComponent {
+    private val songRepository: SongRepository by inject()
 
     fun getAllSongs(): List<Song> = songRepository.getAllSongs()
 

@@ -1,7 +1,11 @@
 package com.nmichail.services
 
 import com.nmichail.database.users.UserDTO
+import com.nmichail.models.Song
+import com.nmichail.repositories.SongRepository
 import com.nmichail.repositories.UserRepository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class UserService(private val userRepository: UserRepository) {
 

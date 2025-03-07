@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
+/*
 class UserRepository {
 
     fun getUserById(id: Int): UserDTO? = transaction {
@@ -46,4 +47,12 @@ class UserRepository {
             it[salt] = user.salt
         }[Users.id]
     }
+}
+
+ */
+
+interface UserRepository {
+    fun getUserById(id: Int): UserDTO?
+    fun getUserByPhoneNumber(phoneNumber: String): UserDTO?
+    fun addUser(user: UserDTO): Int
 }

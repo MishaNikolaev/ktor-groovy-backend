@@ -1,6 +1,7 @@
 package com.nmichail.routes
 
 import com.nmichail.models.Song
+import com.nmichail.repositories.SongRepository
 import com.nmichail.services.MusicService
 import com.nmichail.utils.FileUtils
 import io.ktor.http.*
@@ -13,7 +14,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import java.io.File
-
+/*
 fun Route.musicRoutes() {
     route("/audio") {
         get("/{filename}") {
@@ -25,6 +26,55 @@ fun Route.musicRoutes() {
                 call.respondFile(audioFile)
             } else {
                 call.respond(HttpStatusCode.NotFound, "Audio file not found")
+            }
+        }
+    }
+}*/
+
+fun Route.musicRoutes() {
+    val songController by inject<SongRepository>()
+
+    route("/songs") {
+        get {
+            val songs = songController.getAllSongs()
+            call.respond(songs)
+        }
+
+        get("/{id}") {
+            val id = call.parameters["id"] ?: throw IllegalArgumentException("Missing ID")
+            val song = songController.getSongById(id)
+            if (song != null) {
+                call.respond(song)
+            } else {
+                call.respond(HttpStatusCode.NotFound, "Song not found")
+            }
+        }
+
+        post {
+            val song = call.receive<Song>()
+            val songId = songController.addSong(song)
+            call.respond(HttpStatusCode.Created, mapOf("id" to songId))
+        }
+    }
+}
+
+fun Route.fileRoutes() {
+    route("/files") {
+        get("/{filename}") {
+            val filename = call.parameters["filename"] ?: throw IllegalArgumentException("Filename is missing")
+
+            val filePath = "src/main/resources/openapi/audio/$filename"
+            val file = File(filePath)
+
+            println("Trying to load file from: $filePath")
+
+            if (file.exists()) {
+                println("File found: $filePath")
+                call.response.header(HttpHeaders.ContentDisposition, "inline; filename=\"$filename\"")
+                call.respondFile(file)
+            } else {
+                println("File not found: $filePath")
+                call.respond(HttpStatusCode.NotFound, "File not found")
             }
         }
     }

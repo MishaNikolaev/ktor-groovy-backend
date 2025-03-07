@@ -10,23 +10,33 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.nmichail.config.appModule
+import com.nmichail.routes.fileRoutes
+import com.nmichail.routes.userRoutes
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.koin.ktor.plugin.Koin
+
 
 fun main(args: Array<String>) {
     embeddedServer(Netty, port = 8080) {
         install(Koin) {
             modules(appModule)
         }
-        DatabaseConfig.init()
+        install(ContentNegotiation) {
+            json() // Для поддержки JSON
+        }
         module()
     }.start(wait = true)
 }
 
 fun Application.module() {
     routing {
+        get("/") {
+            call.respondText("Hello, World! Server is working!")
+        }
+
+        fileRoutes()
         musicRoutes()
     }
 }

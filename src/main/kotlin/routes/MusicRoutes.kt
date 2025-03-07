@@ -62,12 +62,18 @@ fun Route.fileRoutes() {
     route("/files") {
         get("/{filename}") {
             val filename = call.parameters["filename"] ?: throw IllegalArgumentException("Filename is missing")
-            val file = File("src/main/resources/$filename")
+
+            val filePath = "src/main/resources/openapi/audio/$filename"
+            val file = File(filePath)
+
+            println("Trying to load file from: $filePath")
 
             if (file.exists()) {
+                println("File found: $filePath")
                 call.response.header(HttpHeaders.ContentDisposition, "inline; filename=\"$filename\"")
                 call.respondFile(file)
             } else {
+                println("File not found: $filePath")
                 call.respond(HttpStatusCode.NotFound, "File not found")
             }
         }

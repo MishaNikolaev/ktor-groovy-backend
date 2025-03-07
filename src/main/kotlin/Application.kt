@@ -17,20 +17,26 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.koin.ktor.plugin.Koin
 
+
 fun main(args: Array<String>) {
     embeddedServer(Netty, port = 8080) {
         install(Koin) {
             modules(appModule)
         }
-        DatabaseConfig.init()
+        install(ContentNegotiation) {
+            json() // Для поддержки JSON
+        }
         module()
     }.start(wait = true)
 }
 
 fun Application.module() {
     routing {
-        musicRoutes()
-        userRoutes()
+        get("/") {
+            call.respondText("Hello, World! Server is working!")
+        }
+
         fileRoutes()
+        musicRoutes()
     }
 }

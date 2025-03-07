@@ -7,6 +7,7 @@ import io.ktor.http.*
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.server.application.*
+import io.ktor.server.request.receive
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -14,48 +15,28 @@ import org.koin.ktor.ext.inject
 import java.io.File
 
 fun Route.musicRoutes() {
-    val musicService = MusicService()
+    val musicService by inject<MusicService>()
 
-    route("/music") {
-        // Получить список всех загруженных треков
+    route("/songs") {
         get {
-            call.respond(musicService.getAllTracks())
+            val songs = musicService.getAllSongs()
+            call.respond(songs)
         }
 
-        // Скачать конкретный трек
-        get("/{filename}") {
-            val filename = call.parameters["filename"]
-            val file = File("uploads/audio/$filename")
-
-            if (file.exists()) {
-                call.response.header(
-                    HttpHeaders.ContentDisposition,
-                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, filename!!).toString()
-                )
-                call.respondFile(file)
+        get("/{id}") {
+            val id = call.parameters["id"] ?: throw IllegalArgumentException("Missing ID")
+            val song = musicService.getSongById(id)
+            if (song != null) {
+                call.respond(song)
             } else {
-                call.respond(HttpStatusCode.NotFound, "Файл не найден")
+                call.respond(HttpStatusCode.NotFound, "Song not found")
             }
         }
-    }
-}
 
-fun Route.uploadMusicRoute() {
-    post("/upload") {
-        val multipart = call.receiveMultipart()
-        var uploadedFilePath: String? = null
-
-        multipart.forEachPart { part ->
-            if (part is PartData.FileItem) {
-                uploadedFilePath = FileUtils.saveFile(part)
-            }
-            part.dispose()
-        }
-
-        if (uploadedFilePath != null) {
-            call.respond(HttpStatusCode.OK, "Файл загружен: $uploadedFilePath")
-        } else {
-            call.respond(HttpStatusCode.BadRequest, "Ошибка загрузки файла")
+        post {
+            val song = call.receive<Song>()
+            val songId = musicService.addSong(song)
+            call.respond(HttpStatusCode.Created, mapOf("id" to songId))
         }
     }
 }

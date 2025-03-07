@@ -10,6 +10,6 @@ data class Song(
     val artist: String,
     val album: String,
     val duration: Int,
-    val filePath: String,
-    val coverPath: String? = null
+    val smallCover: String?,
+    val largeCover: String?
 )

@@ -1,7 +1,7 @@
 package com.nmichail.routes
 
-import com.nmichail.database.users.UserController
 import com.nmichail.database.users.UserDTO
+import com.nmichail.repositories.UserRepository
 import com.nmichail.services.UserService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -34,7 +34,7 @@ fun Route.userRoutes() {
  */
 
 fun Route.userRoutes() {
-    val userController by inject<UserController>()
+    val userController by inject<UserRepository>()
 
     route("/users") {
         post {

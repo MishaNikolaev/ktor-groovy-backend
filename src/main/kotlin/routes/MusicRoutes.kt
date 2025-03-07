@@ -1,7 +1,7 @@
 package com.nmichail.routes
 
-import com.nmichail.database.music.SongController
 import com.nmichail.models.Song
+import com.nmichail.repositories.SongRepository
 import com.nmichail.services.MusicService
 import com.nmichail.utils.FileUtils
 import io.ktor.http.*
@@ -32,7 +32,7 @@ fun Route.musicRoutes() {
 }*/
 
 fun Route.musicRoutes() {
-    val songController by inject<SongController>()
+    val songController by inject<SongRepository>()
 
     route("/songs") {
         get {

@@ -15,28 +15,17 @@ import org.koin.ktor.ext.inject
 import java.io.File
 
 fun Route.musicRoutes() {
-    val musicService by inject<MusicService>()
+    route("/audio") {
+        get("/{filename}") {
+            val filename = call.parameters["filename"] ?: throw IllegalArgumentException("Filename is missing")
+            val audioFile = File("src/main/resources/$filename")
 
-    route("/songs") {
-        get {
-            val songs = musicService.getAllSongs()
-            call.respond(songs)
-        }
-
-        get("/{id}") {
-            val id = call.parameters["id"] ?: throw IllegalArgumentException("Missing ID")
-            val song = musicService.getSongById(id)
-            if (song != null) {
-                call.respond(song)
+            if (audioFile.exists()) {
+                call.response.header(HttpHeaders.ContentDisposition, "inline; filename=\"$filename\"")
+                call.respondFile(audioFile)
             } else {
-                call.respond(HttpStatusCode.NotFound, "Song not found")
+                call.respond(HttpStatusCode.NotFound, "Audio file not found")
             }
-        }
-
-        post {
-            val song = call.receive<Song>()
-            val songId = musicService.addSong(song)
-            call.respond(HttpStatusCode.Created, mapOf("id" to songId))
         }
     }
 }

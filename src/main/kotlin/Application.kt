@@ -27,8 +27,6 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     routing {
-        get("/") {
-            call.respondText("Hello, World! Server is working!")
-        }
+        musicRoutes()
     }
 }

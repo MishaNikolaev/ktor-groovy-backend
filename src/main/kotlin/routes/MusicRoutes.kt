@@ -57,3 +57,19 @@ fun Route.musicRoutes() {
         }
     }
 }
+
+fun Route.fileRoutes() {
+    route("/files") {
+        get("/{filename}") {
+            val filename = call.parameters["filename"] ?: throw IllegalArgumentException("Filename is missing")
+            val file = File("src/main/resources/$filename")
+
+            if (file.exists()) {
+                call.response.header(HttpHeaders.ContentDisposition, "inline; filename=\"$filename\"")
+                call.respondFile(file)
+            } else {
+                call.respond(HttpStatusCode.NotFound, "File not found")
+            }
+        }
+    }
+}
